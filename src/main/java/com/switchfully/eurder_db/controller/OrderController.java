@@ -4,16 +4,24 @@ import com.switchfully.eurder_db.dto.CreateOrderDto;
 import com.switchfully.eurder_db.dto.OrderDto;
 import com.switchfully.eurder_db.dto.ReOrderDto;
 import com.switchfully.eurder_db.entity.Customer;
+import com.switchfully.eurder_db.exception.InvalidAmountInOrderInOrderLineException;
+import com.switchfully.eurder_db.exception.NoOrderLinesException;
+import com.switchfully.eurder_db.exception.OrderIsNotForCustomerException;
+import com.switchfully.eurder_db.exception.UnknownOrderIdException;
 import com.switchfully.eurder_db.service.AdminService;
 import com.switchfully.eurder_db.service.CustomerService;
 import com.switchfully.eurder_db.service.OrderService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @RestController
 @Validated
@@ -66,5 +74,25 @@ public class OrderController {
         adminService.authenticate(email, password);
 
         return orderService.findAllOrdersForShippingDate(shippingDate);
+    }
+
+    @ExceptionHandler(UnknownOrderIdException.class)
+    protected void unknownOrderIdException(UnknownOrderIdException e, HttpServletResponse response) throws IOException {
+        response.sendError(BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler(InvalidAmountInOrderInOrderLineException.class)
+    protected void invalidAmountInOrderInOrderLineException(InvalidAmountInOrderInOrderLineException e, HttpServletResponse response) throws IOException {
+        response.sendError(BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler(NoOrderLinesException.class)
+    protected void noOrderLinesException(NoOrderLinesException e, HttpServletResponse response) throws IOException {
+        response.sendError(BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler(OrderIsNotForCustomerException.class)
+    protected void orderIsNotForCustomerException(OrderIsNotForCustomerException e, HttpServletResponse response) throws IOException {
+        response.sendError(BAD_REQUEST.value(), e.getMessage());
     }
 }

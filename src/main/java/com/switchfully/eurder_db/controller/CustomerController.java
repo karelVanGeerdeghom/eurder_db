@@ -2,14 +2,22 @@ package com.switchfully.eurder_db.controller;
 
 import com.switchfully.eurder_db.dto.CreateCustomerDto;
 import com.switchfully.eurder_db.dto.CustomerDto;
+import com.switchfully.eurder_db.exception.InvalidAmountInOrderInOrderLineException;
+import com.switchfully.eurder_db.exception.NoOrderLinesException;
+import com.switchfully.eurder_db.exception.UnknownCustomerEmailException;
+import com.switchfully.eurder_db.exception.UnknownCustomerIdException;
 import com.switchfully.eurder_db.service.AdminService;
 import com.switchfully.eurder_db.service.CustomerService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
+
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 @RestController
 @Validated
@@ -43,5 +51,15 @@ public class CustomerController {
         adminService.authenticate(email, password);
 
         return customerService.findAllCustomers();
+    }
+
+    @ExceptionHandler(UnknownCustomerEmailException.class)
+    protected void unknownCustomerEmailException(UnknownCustomerEmailException e, HttpServletResponse response) throws IOException {
+        response.sendError(BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler(UnknownCustomerIdException.class)
+    protected void unknownCustomerIdException(UnknownCustomerIdException e, HttpServletResponse response) throws IOException {
+        response.sendError(BAD_REQUEST.value(), e.getMessage());
     }
 }
