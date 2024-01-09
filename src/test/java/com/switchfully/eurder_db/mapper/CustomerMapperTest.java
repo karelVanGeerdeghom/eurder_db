@@ -63,15 +63,15 @@ class CustomerMapperTest {
     void givenUpdateCustomerDto_whenMapUpdateCustomerDtoToCustomer_thenGetCustomer() {
         // GIVEN
         String email = "firstName.lastName@mail.com";
-        String password = "password";
         String firstName = "firstName";
         String lastName = "lastName";
         String phoneNumber = "phoneNumber";
         String address = "address";
-        UpdateCustomerDto updateCustomerDto = new UpdateCustomerDto(email, password, firstName, lastName, phoneNumber, address);
+        UpdateCustomerDto updateCustomerDto = new UpdateCustomerDto(email, firstName, lastName, phoneNumber, address);
+        Customer customer = new Customer(email, "password", firstName, lastName, phoneNumber, address);
 
         // WHEN
-        Customer actual = customerMapper.updateCustomerDtoToCustomer(updateCustomerDto);
+        Customer actual = customerMapper.updateCustomerDtoToCustomer(customer, updateCustomerDto);
 
         // THEN
         assertThat(actual).isInstanceOf(Customer.class);

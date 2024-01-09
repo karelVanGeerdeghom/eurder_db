@@ -2,10 +2,9 @@ package com.switchfully.eurder_db.controller;
 
 import com.switchfully.eurder_db.dto.CreateCustomerDto;
 import com.switchfully.eurder_db.dto.CustomerDto;
-import com.switchfully.eurder_db.exception.InvalidAmountInOrderInOrderLineException;
-import com.switchfully.eurder_db.exception.NoOrderLinesException;
-import com.switchfully.eurder_db.exception.UnknownCustomerEmailException;
-import com.switchfully.eurder_db.exception.UnknownCustomerIdException;
+import com.switchfully.eurder_db.dto.UpdateCustomerDto;
+import com.switchfully.eurder_db.entity.Customer;
+import com.switchfully.eurder_db.exception.*;
 import com.switchfully.eurder_db.service.AdminService;
 import com.switchfully.eurder_db.service.CustomerService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -37,6 +36,15 @@ public class CustomerController {
         return customerService.createCustomer(createCustomerDto);
     }
 
+    @PutMapping("/{id}")
+    public CustomerDto updateCustomer(@RequestHeader String email, @RequestHeader String password, @PathVariable Long id, @Valid @RequestBody UpdateCustomerDto updateCustomerDto) {
+        Customer customer = customerService.authenticate(email, password);
+        customerService.checkId(customer, id);
+
+        return customerService.updateCustomer(id, updateCustomerDto);
+    }
+
+
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public CustomerDto getCustomer(@RequestHeader String email, @RequestHeader String password, @PathVariable Long id) {
@@ -60,6 +68,11 @@ public class CustomerController {
 
     @ExceptionHandler(UnknownCustomerIdException.class)
     protected void unknownCustomerIdException(UnknownCustomerIdException e, HttpServletResponse response) throws IOException {
+        response.sendError(BAD_REQUEST.value(), e.getMessage());
+    }
+
+    @ExceptionHandler(WrongCustomerIdException.class)
+    protected void wrongCustomerIdException(WrongCustomerIdException e, HttpServletResponse response) throws IOException {
         response.sendError(BAD_REQUEST.value(), e.getMessage());
     }
 }

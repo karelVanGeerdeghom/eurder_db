@@ -1,12 +1,9 @@
 package com.switchfully.eurder_db.service;
 
-import com.switchfully.eurder_db.dto.CreateCustomerDto;
-import com.switchfully.eurder_db.dto.CustomerDto;
+import com.switchfully.eurder_db.dto.*;
 import com.switchfully.eurder_db.entity.Customer;
-import com.switchfully.eurder_db.exception.UnknownAdminEmailException;
-import com.switchfully.eurder_db.exception.UnknownCustomerEmailException;
-import com.switchfully.eurder_db.exception.UnknownCustomerIdException;
-import com.switchfully.eurder_db.exception.WrongPasswordException;
+import com.switchfully.eurder_db.entity.Item;
+import com.switchfully.eurder_db.exception.*;
 import com.switchfully.eurder_db.mapper.CustomerMapper;
 import com.switchfully.eurder_db.repository.CustomerRepository;
 import jakarta.transaction.Transactional;
@@ -14,6 +11,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -56,7 +54,13 @@ public class CustomerService {
         return customerMapper.customerToCustomerDto(customerRepository.save(customer));
     }
 
-    public CustomerDto findById(Long id) {
+    public CustomerDto updateCustomer(Long id, UpdateCustomerDto updateCustomerDto) throws UnknownCustomerIdException {
+        Customer customer = customerMapper.updateCustomerDtoToCustomer(customerRepository.findById(id).orElseThrow(UnknownCustomerIdException::new), updateCustomerDto);
+
+        return customerMapper.customerToCustomerDto(customerRepository.save(customer));
+    }
+
+    public CustomerDto findById(Long id) throws UnknownCustomerIdException {
         Customer customer = customerRepository.findById(id).orElseThrow(UnknownCustomerIdException::new);
 
         return customerMapper.customerToCustomerDto(customer);
@@ -64,5 +68,11 @@ public class CustomerService {
 
     public List<CustomerDto> findAllCustomers() {
         return customerRepository.findAll().stream().map(customerMapper::customerToCustomerDto).collect(Collectors.toList());
+    }
+
+    public void checkId(Customer customer, Long id) throws WrongCustomerIdException {
+        if (!Objects.equals(customer.getId(), id)) {
+            throw new WrongCustomerIdException();
+        }
     }
 }

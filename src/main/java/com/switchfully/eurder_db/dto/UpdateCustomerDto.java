@@ -8,8 +8,6 @@ public class UpdateCustomerDto {
     @Email
     private String email;
     @NotBlank
-    private String password;
-    @NotBlank
     private String firstName;
     @NotBlank
     private String lastName;
@@ -18,11 +16,10 @@ public class UpdateCustomerDto {
     @NotBlank
     private String address;
 
-    public UpdateCustomerDto(String email, String password, String firstName, String lastName, String phoneNumber, String address) {
+    public UpdateCustomerDto(String email, String firstName, String lastName, String phoneNumber, String address) {
+        this.email = email;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.email = email;
-        this.password = password;
         this.phoneNumber = phoneNumber;
         this.address = address;
     }
@@ -33,14 +30,6 @@ public class UpdateCustomerDto {
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
     }
 
     public String getFirstName() {

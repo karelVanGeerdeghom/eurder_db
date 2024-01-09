@@ -16,7 +16,13 @@ public class CustomerMapper {
         return new Customer(createCustomerDto.getEmail(), createCustomerDto.getPassword(), createCustomerDto.getFirstName(), createCustomerDto.getLastName(), createCustomerDto.getPhoneNumber(), createCustomerDto.getAddress());
     }
 
-    public Customer updateCustomerDtoToCustomer(UpdateCustomerDto updateCustomerDto) {
-        return new Customer(updateCustomerDto.getEmail(), updateCustomerDto.getPassword(), updateCustomerDto.getFirstName(), updateCustomerDto.getLastName(), updateCustomerDto.getPhoneNumber(), updateCustomerDto.getAddress());
+    public Customer updateCustomerDtoToCustomer(Customer customer, UpdateCustomerDto updateCustomerDto) {
+        customer.setEmail(updateCustomerDto.getEmail());
+        customer.setFirstName(updateCustomerDto.getFirstName());
+        customer.setLastName(updateCustomerDto.getLastName());
+        customer.setPhoneNumber(updateCustomerDto.getPhoneNumber());
+        customer.setAddress(updateCustomerDto.getAddress());
+
+        return customer;
     }
 }
